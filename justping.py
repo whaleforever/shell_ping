@@ -66,9 +66,9 @@ if __name__ == '__main__':
     print 'host(ip)'.rjust(34), ' min_time'.rjust(8), 'avg_time'.rjust(8), 'max_time'.rjust(8), 'lost'.rjust(8)
 
     for x in hosts:
-        host, ip, time_min, time_avg, time_max, lost = shell_ping.ping(x, times=5)
-        result_time.update({host: [time_min, time_avg, time_max]})
-        print ('%s(%s): ' % (host, ip)).rjust(35),\
+        ip, time_min, time_avg, time_max, lost = shell_ping.ping(x, times=5)
+        result_time.update({x: [time_min, time_avg, time_max]})
+        print ('%s(%s): ' % (x, ip)).rjust(35),\
               ('% 3sms' % (time_min)).rjust(8),\
               ('% 3sms' % (time_avg)).rjust(8),\
               ('% 3sms' % (time_max)).rjust(8),\
