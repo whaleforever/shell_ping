@@ -63,6 +63,8 @@ def ping(target, times=4):
 
     # packet loss rate
     lost = re.findall(r'\d+.\d+(?=%)', text)
+    if not lost:
+        lost = re.findall(r'\d+(?=%)', text)
     lost = int(round(float(lost[len(lost)-1]))) if lost else 100
 
     return ip, time_min, time_avg, time_max, lost
