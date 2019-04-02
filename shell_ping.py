@@ -2,13 +2,16 @@ import os
 import re
 import subprocess
 
-def ping(target, times=4):
+def ping(target, times=4, timeout=5):
     """ ping target in IP/hostname format
+    params:
+        target:
+            e.g.
+                '192.168.1.1' or 'www.google.com'
+        times: times to retries ping command
+        timeout: in seconds to stop ping command
 
-    e.g.
-        '192.168.1.1' or 'www.google.com'
-
-    return ip, time_min, time_avg, time_max, lost
+    return ip, time_min, time_avg, time_max, lost in ms
         ip: IP address of target, default is 0.0.0.0
         time_min: min ping time(ms), default is -1
         time_avg: avg ping time(ms), default is -1
@@ -19,23 +22,17 @@ def ping(target, times=4):
     """
 
     if os.name == 'nt':  # win32
-        cmd = 'ping -w 2000 ' + target
+        cmd = 'ping -w %d '%(timeout * 1000) + target
     else:  # unix/linux
-        cmd = 'ping -c%d -W2000 %s' % (times, target)
+        cmd = 'ping -c%d -W%s %s' % (times, timeout, target)
 
     # execute ping command and get stdin thru pipe
     pipe = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()[0]
     if not pipe:
-        if os.name == 'nt':  # win32
-            cmd = 'ping -w 2000 ' + target
-        else:  # unix/linux
-            cmd = 'ping6 -c%d -W2000 %s' % (times, target)
-        pipe = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).communicate()[0]
-        if not pipe:
-            return '0.0.0.0', -1, -1, -1, 100
+        return '0.0.0.0', -1, -1, -1, 100
 
     # replace CR/LF
-    text = pipe.replace('\r\n', '\n').replace('\r', '\n')
+    text = pipe.decode().replace('\r\n', '\n').replace('\r', '\n')
 
     # match IP address in format: [192.168.1.1] (192.168.1.1)
     ip = re.findall(r'(?<=\(|\[)\d+\.\d+\.\d+\.\d+(?=\)|\])', text)

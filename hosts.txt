@@ -1,5 +1,0 @@
-www.google.com
-www.yahoo.com
-www.ebay.com
-appldnld.apple.com
-windowsupdate.microsoft.com
